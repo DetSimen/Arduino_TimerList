@@ -41,13 +41,14 @@
 	byte    normalLedPin = 13   // сюда подключим зеленый светодиод, который будет просто моргать
 	byte    errorLedPin = 10;   // сюда подключим красный светодиод, сигнализирующий, например, об ошибке
 
-	void setup() {
-  	pinMode(errorLedPin,OUTPUT);
-  	pinMode(normalLedPin,OUTPUT);
-  	hnd_blink = TimerList.Add(OKBlink,1000);  // задержка между морганиями 1 секунда
-  	hnd_error = TimerList.Add(ErrorBlink,250); // моргаем 2 раза в секунду
+	void setup() 
+	{
+  	 pinMode(errorLedPin,OUTPUT);
+  	 pinMode(normalLedPin,OUTPUT);
+  	 
+	 hnd_blink = TimerList.Add(OKBlink,1000);  // добавляем таймер, задержка между морганиями 1 секунда, вызывается OKBlink
+  	 hnd_error = TimerList.Add(ErrorBlink,250); // добавляем таймер, моргаем 2 раза в секунду, вызывается ErrorBlink
   
-
 	}
 
 	void OKBlink(void)    // функция вызывается раз в секунду
