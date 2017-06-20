@@ -98,7 +98,7 @@
 
 	void tmrLEDBlink()
 	{
-	 static bool ledstate = false;
+	 static bool ledstate = false;	  // статическая переменная хранит предыдущее состояние светодиода
 	 ledstate = !ledstate;		  // инвертируем состояние светодиода 	
 	 digitalWrite(ledpin, ledstate);  // пишем новое состояние в порт (зажигаем/гасим светодиод)
 	 TimerList.TimerNewInterval(hLEDBlink, ledstate ? 50 : 4950); // устанавливаем новый интервал для таймера hLEDBlink
