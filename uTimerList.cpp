@@ -1,11 +1,16 @@
 #include "Arduino.h"
 #include "uTimerList.h"
+#include "MyTypes.h"
 
-#define AND &&
-#define OR  ||
-#define NOT !
+static bool InRange(int value, int min, int max)               // отдает true, если value лежит в диапаносе от min до max (включительно)
+{
+	return (value >= min) AND(value <= max);
+}
 
-TTimerList TimerList;    
+
+
+TTimerList TimerList; 
+
 
 /// Настройка таймеров для первого использования
 /// на срабатывание каждую 1 миллисекунду
@@ -14,33 +19,18 @@ TTimerList TimerList;
 /// на других протестировать нет возможности
 
 
-#ifdef ARDUINO_AVR_MEGA2560
 void TTimerList::Init()
 {
 	cli();
-	TCCR5A = 0; TCCR5B = 0;
-	TCNT5 = 0;
 
-	OCR5A = _1MSCONST;
-	TCCR5B |= (1 << WGM52);
-	TCCR5B |= (1 << CS51);// | (1 << CS10);
-	TIMSK5 |= (1 << OCIE5A);
-	sei();
-}
-#else  // Uno, Nano, Micro
-void TTimerList::Init()
-{
-	cli();
-	TCCR1A = 0; TCCR1B = 0;
-	TCNT1 = 0;
+	TCCR0A = TCCR0A & 0b11111100;
+	OCR0A = TIMER0_ONE_MS;
+	TIMSK0 |= 0x3;
+	TIFR0 = TIFR0 | 0x2;
 
-	OCR1A = _1MSCONST;
-	TCCR1B |= (1 << WGM12);
-	TCCR1B |= (1 << CS11);// | (1 << CS10);
-	TIMSK1 |= (1 << OCIE1A);
 	sei();
+
 }
-#endif 
 
 TTimerList::TTimerList()
 {
@@ -85,6 +75,11 @@ THandle TTimerList::AddMinutes(PVoidFunc AFunc, word timeMin)
 	return Add(AFunc, timeMin*60L*1000L);     // оналогично для минут
 }
 
+byte TTimerList::AvailableCount(void)
+{
+	return MAXTIMERSCOUNT-count;
+}
+
 bool TTimerList::CanAdd()
 {
 	for (byte i = 0; i < MAXTIMERSCOUNT; i++)
@@ -121,8 +116,9 @@ void TTimerList::Delete(THandle hnd)                 // удалить таймер с хэндлом
 void TTimerList::Step(void)
 {
 	if (NOT active) return;                         // если все таймеры остановлены, то и смысла нет
+	byte _sreg = SREG;								// запомним состояние прерываний
 	cli();                                          // чтоб никто не помешал изменить интервалы, запрещаем прерывания
-// сопсно рабочий цикл                      
+			// сопсно рабочий цикл                      
 	for (THandle i = 0; i < MAXTIMERSCOUNT; i++)   // пробегаем по всему списку таймеров
 	{
 		if (Items[i].CallingFunc == NULL)  continue;  // если функция-обрабоччик не назначена, уходим на следующий цикл 
@@ -131,7 +127,7 @@ void TTimerList::Step(void)
 		Items[i].CallingFunc();                       // если достиг 0, вызываем функцию-обработчик
 		Items[i].WorkingCounter = Items[i].InitCounter; // и записываем в рабочий счетчик начальное значение для счета сначала
 	}
-	sei();                                            // теперь и прерывания можно разрешить
+	SREG = _sreg;	                                  // теперь и прерывания можно восстановить как было
 }
 
 void TTimerList::Start()                              
@@ -177,31 +173,28 @@ void TTimerList::TimerStart(THandle hnd)              // запустить остановленный
 
 void TTimerList::TimerNewInterval(THandle hnd, long newinterval)
 {
-	if (NOT InRange(hnd, 0, MAXTIMERSCOUNT - 1)) return;
+	if (NOT InRange(hnd, 0, MAXTIMERSCOUNT - 1)) 
+	{
+		Serial << "NotInRange\n"; return;
+	}
+	PCallStruct item = &Items[hnd];
+	if (item->CallingFunc == NULL)
+	{
+		Serial << "NULL\n";
+		return;
+	}
 	cli();
-	Items[hnd].InitCounter = newinterval;
-	Items[hnd].WorkingCounter = newinterval;
-	if (NOT Items[hnd].Active) TimerStart(hnd);
+	item->InitCounter = newinterval;
+	item->WorkingCounter = newinterval;
+	item->Active = true;
 	sei();
 }
 
-#ifdef ARDUINO_AVR_MEGA2560                              // обработчик прерывания аппаратного таймера
-ISR(TIMER5_COMPA_vect)
+
+ISR(TIMER0_COMPA_vect)
 {
-	OCR5A = _1MSCONST;
+
+	TCNT0 = 0xFF;
 	TimerList.Step();
 }
 
-#else
-ISR(TIMER1_COMPA_vect)
-{
-	OCR1A = _1MSCONST;
-	TimerList.Step();
-}
-#endif
-
-
-bool InRange(int value, int min, int max)               // отдает true, если value лежит в диапазоне от min до max (включительно)
-{
-	return (value >= min) AND (value <= max);
-}
