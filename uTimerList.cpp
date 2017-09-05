@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "uTimerList.h"
-#include "MyTypes.h"
+
 
 static bool InRange(int value, int min, int max)               // отдает true, если value лежит в диапаносе от min до max (включительно)
 {
@@ -173,16 +173,9 @@ void TTimerList::TimerStart(THandle hnd)              // запустить остановленный
 
 void TTimerList::TimerNewInterval(THandle hnd, long newinterval)
 {
-	if (NOT InRange(hnd, 0, MAXTIMERSCOUNT - 1)) 
-	{
-		Serial << "NotInRange\n"; return;
-	}
+	if (NOT InRange(hnd, 0, MAXTIMERSCOUNT - 1)) return;
 	PCallStruct item = &Items[hnd];
-	if (item->CallingFunc == NULL)
-	{
-		Serial << "NULL\n";
-		return;
-	}
+	if (item->CallingFunc == NULL) return;
 	cli();
 	item->InitCounter = newinterval;
 	item->WorkingCounter = newinterval;

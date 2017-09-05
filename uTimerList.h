@@ -1,5 +1,9 @@
 #pragma once
 
+#define AND &&
+#define OR ||
+#define NOT !
+
 
 using	PVoidFunc = void(*)(void);      // указатель на функцию без параметров, ничего не возвращающую: void AnyFunc(void)  
 
