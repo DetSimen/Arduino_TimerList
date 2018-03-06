@@ -1,23 +1,21 @@
 #include "Arduino.h"
 #include "TTimerList.h"
-#include "MyTypes.h"
 
-
-/*
+   
 static bool InRange(int value, int min, int max)
 {
 	return (value >= min) AND(value <= max);
 }
-*/
+
 
 TTimerList TimerList; 
 
 
-/// Настройка таймеров для первого использования
-/// на срабатывание каждую 1 миллисекунду
-/// для Uno, Nano и прочих Micro с ATMega328, и на Mega2560  работает на таймере #0
-/// на Atmega8 работает на таймере 1, на таймере 0 нет прерывания по совпадению
-/// на других протестировать нет возможности
+/// ГЌГ Г±ГІГ°Г®Г©ГЄГ  ГІГ Г©Г¬ГҐГ°Г®Гў Г¤Г«Гї ГЇГҐГ°ГўГ®ГЈГ® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГї
+/// Г­Г  Г±Г°Г ГЎГ ГІГ»ГўГ Г­ГЁГҐ ГЄГ Г¦Г¤ГіГѕ 1 Г¬ГЁГ«Г«ГЁГ±ГҐГЄГіГ­Г¤Гі
+/// Г¤Г«Гї Uno, Nano ГЁ ГЇГ°Г®Г·ГЁГµ Micro Г± ATMega328, ГЁ Г­Г  Mega2560  Г°Г ГЎГ®ГІГ ГҐГІ Г­Г  ГІГ Г©Г¬ГҐГ°ГҐ #0
+/// Г­Г  Atmega8 Г°Г ГЎГ®ГІГ ГҐГІ Г­Г  ГІГ Г©Г¬ГҐГ°ГҐ 1, Г­Г  ГІГ Г©Г¬ГҐГ°ГҐ 0 Г­ГҐГІ ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГї ГЇГ® Г±Г®ГўГЇГ Г¤ГҐГ­ГЁГѕ
+/// Г­Г  Г¤Г°ГіГЈГЁГµ ГЇГ°Г®ГІГҐГ±ГІГЁГ°Г®ГўГ ГІГј Г­ГҐГІ ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГЁ
 
 #if defined(__AVR_ATmega2560__) 
 void TTimerList::Init()
@@ -71,7 +69,7 @@ void TTimerList::Init()
 TTimerList::TTimerList()
 {
 	count = 0;
-	for (byte i = 0; i < MAXTIMERSCOUNT; i++)  // первоначальная инициализация, заполнение списка нулями
+	for (byte i = 0; i < MAXTIMERSCOUNT; i++)  // ГЇГҐГ°ГўГ®Г­Г Г·Г Г«ГјГ­Г Гї ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї, Г§Г ГЇГ®Г«Г­ГҐГ­ГЁГҐ Г±ГЇГЁГ±ГЄГ  Г­ГіГ«ГїГ¬ГЁ
 	{
 		Items[i].CallingFunc    = NULL;
 		Items[i].InitCounter    = 0;
@@ -85,8 +83,8 @@ THandle TTimerList::Add(PVoidFunc AFunc, long timeMS)
 {
 	for (THandle i = 0; i < MAXTIMERSCOUNT; i++)
 	{
-		if (Items[i].CallingFunc == NULL)         // пробегаемся по списку таймеров
-		{                                         // если нашли пустую дырку, добавляем таймер
+		if (Items[i].CallingFunc == NULL)         // ГЇГ°Г®ГЎГҐГЈГ ГҐГ¬Г±Гї ГЇГ® Г±ГЇГЁГ±ГЄГі ГІГ Г©Г¬ГҐГ°Г®Гў
+		{                                         // ГҐГ±Г«ГЁ Г­Г ГёГ«ГЁ ГЇГіГ±ГІГіГѕ Г¤Г»Г°ГЄГі, Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГІГ Г©Г¬ГҐГ°
 			byte sreg = SREG; cli();
 			Items[i].CallingFunc	= AFunc;
 			Items[i].InitCounter	= timeMS;
@@ -98,17 +96,17 @@ THandle TTimerList::Add(PVoidFunc AFunc, long timeMS)
 			return i;
 		}
 	}
-	return 0xFF;                                   // если нет - вернем код ашыпки (-1) 
+	return 0xFF;                                   // ГҐГ±Г«ГЁ Г­ГҐГІ - ГўГҐГ°Г­ГҐГ¬ ГЄГ®Г¤ Г ГёГ»ГЇГЄГЁ (-1) 
 }
 
 THandle TTimerList::AddSeconds(PVoidFunc AFunc, word timeSec)
 {
-	return Add(AFunc, 1000L*timeSec);          // оналогично для секунд 
+	return Add(AFunc, 1000L*timeSec);          // Г®Г­Г Г«Г®ГЈГЁГ·Г­Г® Г¤Г«Гї Г±ГҐГЄГіГ­Г¤ 
 }
 
 THandle TTimerList::AddMinutes(PVoidFunc AFunc, word timeMin)
 {
-	return Add(AFunc, timeMin*60L*1000L);     // оналогично для минут
+	return Add(AFunc, timeMin*60L*1000L);     // Г®Г­Г Г«Г®ГЈГЁГ·Г­Г® Г¤Г«Гї Г¬ГЁГ­ГіГІ
 }
 
 
@@ -117,18 +115,18 @@ bool TTimerList::CanAdd() const
 {
 	for (byte i = 0; i < MAXTIMERSCOUNT; i++)
 	{
-		if (Items[i].CallingFunc != NULL) continue;  // если в списке есть пустые места, куда можно добавить таймер
-		return true;                                 // вернем true
+		if (Items[i].CallingFunc != NULL) continue;  // ГҐГ±Г«ГЁ Гў Г±ГЇГЁГ±ГЄГҐ ГҐГ±ГІГј ГЇГіГ±ГІГ»ГҐ Г¬ГҐГ±ГІГ , ГЄГіГ¤Г  Г¬Г®Г¦Г­Г® Г¤Г®ГЎГ ГўГЁГІГј ГІГ Г©Г¬ГҐГ°
+		return true;                                 // ГўГҐГ°Г­ГҐГ¬ true
 	}
-	return false;                                    // если нет - то false
+	return false;                                    // ГҐГ±Г«ГЁ Г­ГҐГІ - ГІГ® false
 }
 
 bool TTimerList::IsActive() const
 {
-	return active;                                   // если хоть один таймер активен, вернет true, если все остановлены - false
+	return active;                                   // ГҐГ±Г«ГЁ ГµГ®ГІГј Г®Г¤ГЁГ­ ГІГ Г©Г¬ГҐГ° Г ГЄГІГЁГўГҐГ­, ГўГҐГ°Г­ГҐГІ true, ГҐГ±Г«ГЁ ГўГ±ГҐ Г®Г±ГІГ Г­Г®ГўГ«ГҐГ­Г» - false
 }
 
-void TTimerList::Delete(THandle hnd)                 // удалить таймер с хэндлом hnd.     
+void TTimerList::Delete(THandle hnd)                 // ГіГ¤Г Г«ГЁГІГј ГІГ Г©Г¬ГҐГ° Г± ГµГЅГ­Г¤Г«Г®Г¬ hnd.     
 {
 	if (InRange(hnd, 0, MAXTIMERSCOUNT - 1))
 	{
@@ -138,48 +136,48 @@ void TTimerList::Delete(THandle hnd)                 // удалить таймер с хэндлом
 		Items[hnd].WorkingCounter	= 0;
 		Items[hnd].Active           = false;
 		if (count > 0)  count--;
-		if (count==0) AllStop();                        // если все таймеры удалены, остановить и цикл перебора таймеров
+		if (count==0) AllStop();                        // ГҐГ±Г«ГЁ ГўГ±ГҐ ГІГ Г©Г¬ГҐГ°Г» ГіГ¤Г Г«ГҐГ­Г», Г®Г±ГІГ Г­Г®ГўГЁГІГј ГЁ Г¶ГЁГЄГ« ГЇГҐГ°ГҐГЎГ®Г°Г  ГІГ Г©Г¬ГҐГ°Г®Гў
 		SREG = sreg;
 	}
 }
 
-/// эта функция вызывается при аппаратном срабатывании таймера каждую миллисекунду
-/// запуская цикл декремента интервалов срабатывания
+/// ГЅГІГ  ГґГіГ­ГЄГ¶ГЁГї ГўГ»Г§Г»ГўГ ГҐГІГ±Гї ГЇГ°ГЁ Г ГЇГЇГ Г°Г ГІГ­Г®Г¬ Г±Г°Г ГЎГ ГІГ»ГўГ Г­ГЁГЁ ГІГ Г©Г¬ГҐГ°Г  ГЄГ Г¦Г¤ГіГѕ Г¬ГЁГ«Г«ГЁГ±ГҐГЄГіГ­Г¤Гі
+/// Г§Г ГЇГіГ±ГЄГ Гї Г¶ГЁГЄГ« Г¤ГҐГЄГ°ГҐГ¬ГҐГ­ГІГ  ГЁГ­ГІГҐГ°ГўГ Г«Г®Гў Г±Г°Г ГЎГ ГІГ»ГўГ Г­ГЁГї
 
 void TTimerList::Step(void)
 {
-	if (NOT active) return;                         // если все таймеры остановлены, то и смысла нет
-	byte _sreg = SREG;								// запомним состояние прерываний
-			// сопсно рабочий цикл                      
-	for (THandle i = 0; i < MAXTIMERSCOUNT; i++)   // пробегаем по всему списку таймеров
+	if (NOT active) return;                         // ГҐГ±Г«ГЁ ГўГ±ГҐ ГІГ Г©Г¬ГҐГ°Г» Г®Г±ГІГ Г­Г®ГўГ«ГҐГ­Г», ГІГ® ГЁ Г±Г¬Г»Г±Г«Г  Г­ГҐГІ
+	byte _sreg = SREG;								// Г§Г ГЇГ®Г¬Г­ГЁГ¬ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГ©
+			// Г±Г®ГЇГ±Г­Г® Г°Г ГЎГ®Г·ГЁГ© Г¶ГЁГЄГ«                      
+	for (THandle i = 0; i < MAXTIMERSCOUNT; i++)   // ГЇГ°Г®ГЎГҐГЈГ ГҐГ¬ ГЇГ® ГўГ±ГҐГ¬Гі Г±ГЇГЁГ±ГЄГі ГІГ Г©Г¬ГҐГ°Г®Гў
 	{
-		cli();                                          // чтоб никто не помешал изменить интервалы, запрещаем прерывания
-		if (Items[i].CallingFunc == NULL)  continue;  // если функция-обрабоччик не назначена, уходим на следующий цикл 
-		if (NOT Items[i].Active)           continue; // если таймер остановлен - тоже
-		if (--Items[i].WorkingCounter > 0) continue;  // уменьшаем на 1 рабочий счетчик
-		Items[i].WorkingCounter = Items[i].InitCounter; // и записываем в рабочий счетчик начальное значение для счета сначала
+		cli();                                          // Г·ГІГ®ГЎ Г­ГЁГЄГІГ® Г­ГҐ ГЇГ®Г¬ГҐГёГ Г« ГЁГ§Г¬ГҐГ­ГЁГІГј ГЁГ­ГІГҐГ°ГўГ Г«Г», Г§Г ГЇГ°ГҐГ№Г ГҐГ¬ ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГї
+		if (Items[i].CallingFunc == NULL)  continue;  // ГҐГ±Г«ГЁ ГґГіГ­ГЄГ¶ГЁГї-Г®ГЎГ°Г ГЎГ®Г·Г·ГЁГЄ Г­ГҐ Г­Г Г§Г­Г Г·ГҐГ­Г , ГіГµГ®Г¤ГЁГ¬ Г­Г  Г±Г«ГҐГ¤ГіГѕГ№ГЁГ© Г¶ГЁГЄГ« 
+		if (NOT Items[i].Active)           continue; // ГҐГ±Г«ГЁ ГІГ Г©Г¬ГҐГ° Г®Г±ГІГ Г­Г®ГўГ«ГҐГ­ - ГІГ®Г¦ГҐ
+		if (--Items[i].WorkingCounter > 0) continue;  // ГіГ¬ГҐГ­ГјГёГ ГҐГ¬ Г­Г  1 Г°Г ГЎГ®Г·ГЁГ© Г±Г·ГҐГІГ·ГЁГЄ
+		Items[i].WorkingCounter = Items[i].InitCounter; // ГЁ Г§Г ГЇГЁГ±Г»ГўГ ГҐГ¬ Гў Г°Г ГЎГ®Г·ГЁГ© Г±Г·ГҐГІГ·ГЁГЄ Г­Г Г·Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Г¤Г«Гї Г±Г·ГҐГІГ  Г±Г­Г Г·Г Г«Г 
 		sei();
-		Items[i].CallingFunc();                       // если достиг 0, вызываем функцию-обработчик
+		Items[i].CallingFunc();                       // ГҐГ±Г«ГЁ Г¤Г®Г±ГІГЁГЈ 0, ГўГ»Г§Г»ГўГ ГҐГ¬ ГґГіГ­ГЄГ¶ГЁГѕ-Г®ГЎГ°Г ГЎГ®ГІГ·ГЁГЄ
 	}
-	SREG = _sreg;	                                  // теперь и прерывания можно восстановить как было
+	SREG = _sreg;	                                  // ГІГҐГЇГҐГ°Гј ГЁ ГЇГ°ГҐГ°Г»ГўГ Г­ГЁГї Г¬Г®Г¦Г­Г® ГўГ®Г±Г±ГІГ Г­Г®ГўГЁГІГј ГЄГ ГЄ ГЎГ»Г«Г®
 }
 
 void TTimerList::AllStart()                              
 {
-	if (NOT active) Init();                              // при добавлении первого таймера, инициализируем аппаратный таймер
+	if (NOT active) Init();                              // ГЇГ°ГЁ Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГЁ ГЇГҐГ°ГўГ®ГЈГ® ГІГ Г©Г¬ГҐГ°Г , ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§ГЁГ°ГіГҐГ¬ Г ГЇГЇГ Г°Г ГІГ­Г»Г© ГІГ Г©Г¬ГҐГ°
 	active = true;
 }
 
 void TTimerList::AllStop()
 {
-	active = false;                                   // остановить все таймеры
+	active = false;                                   // Г®Г±ГІГ Г­Г®ГўГЁГІГј ГўГ±ГҐ ГІГ Г©Г¬ГҐГ°Г»
 }
 
 void TTimerList::TimerStop(THandle hnd)
 {
 	if (InRange(hnd, 0, MAXTIMERSCOUNT-1))
 	{
-		Items[hnd].Active = false;                    // остановить таймер номер hnd
+		Items[hnd].Active = false;                    // Г®Г±ГІГ Г­Г®ГўГЁГІГј ГІГ Г©Г¬ГҐГ° Г­Г®Г¬ГҐГ° hnd
 	}
 }
 
@@ -189,35 +187,35 @@ bool TTimerList::TimerActive(THandle hnd)
 	else return Items[hnd].Active;
 }
 
-void TTimerList::TimerStart(THandle hnd)              // запустить остановленный таймер номер hnd
+void TTimerList::TimerStart(THandle hnd)              // Г§Г ГЇГіГ±ГІГЁГІГј Г®Г±ГІГ Г­Г®ГўГ«ГҐГ­Г­Г»Г© ГІГ Г©Г¬ГҐГ° Г­Г®Г¬ГҐГ° hnd
 {
 	if (isValid(hnd))
 	{
 		if (Items[hnd].Active)                   return;
 		byte old = SREG; 
 		cli();
-		Items[hnd].WorkingCounter = Items[hnd].InitCounter;  // и начать отсчет интервала сначала
+		Items[hnd].WorkingCounter = Items[hnd].InitCounter;  // ГЁ Г­Г Г·Г ГІГј Г®ГІГ±Г·ГҐГІ ГЁГ­ГІГҐГ°ГўГ Г«Г  Г±Г­Г Г·Г Г«Г 
 		Items[hnd].Active = true;
 		SREG = old;
 	}
 }
 
-void TTimerList::TimerResume(THandle hnd)                 // продолжить счёт таймера после паузы
+void TTimerList::TimerResume(THandle hnd)                 // ГЇГ°Г®Г¤Г®Г«Г¦ГЁГІГј Г±Г·ВёГІ ГІГ Г©Г¬ГҐГ°Г  ГЇГ®Г±Г«ГҐ ГЇГ ГіГ§Г»
 {
 	if (isValid(hnd)) Items[hnd].Active = true;
 }
 
-void TTimerList::TimerPause(THandle hnd)				// поставить таймер на паузу
+void TTimerList::TimerPause(THandle hnd)				// ГЇГ®Г±ГІГ ГўГЁГІГј ГІГ Г©Г¬ГҐГ° Г­Г  ГЇГ ГіГ§Гі
 {
 	if (isValid(hnd)) Items[hnd].Active = false;
 }
 
-bool TTimerList::isValid(THandle hnd)					// private функция, cнаружи не видна
+bool TTimerList::isValid(THandle hnd)					// private ГґГіГ­ГЄГ¶ГЁГї, cГ­Г Г°ГіГ¦ГЁ Г­ГҐ ГўГЁГ¤Г­Г 
 {
 	return (InRange(hnd, 0, MAXTIMERSCOUNT) AND (Items[hnd].CallingFunc != NULL));
 }
 
-void TTimerList::TimerNewInterval(THandle hnd, long newinterval)	// назначить таймеру новый интервал
+void TTimerList::TimerNewInterval(THandle hnd, long newinterval)	// Г­Г Г§Г­Г Г·ГЁГІГј ГІГ Г©Г¬ГҐГ°Гі Г­Г®ГўГ»Г© ГЁГ­ГІГҐГ°ГўГ Г«
 {
 	if (isValid(hnd))
 	{
