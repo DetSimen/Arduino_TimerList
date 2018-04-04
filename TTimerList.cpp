@@ -1,16 +1,11 @@
-﻿#include "TTimerList.h"
 #include "Arduino.h"
 #include "TTimerList.h"
-#include "MyTypes.h"
 
-
-/*  Раскомментировать 
 
 static bool InRange(int value, int min, int max)
 {
 	return (value >= min) AND(value <= max);
 }
-*/
 
 TTimerList TimerList; 
 
