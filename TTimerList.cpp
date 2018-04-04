@@ -1,6 +1,7 @@
-#include "Arduino.h"
+﻿#include "Arduino.h"
 #include "TTimerList.h"
 
+static	const THandle INVALID_HANDLE = -1;
 
 static bool InRange(int value, int min, int max)
 {
