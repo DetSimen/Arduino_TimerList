@@ -2,7 +2,7 @@
 #include "Arduino.h"
 
 
-
+const THandle INVALID_HANDLE = -1;
 
 #define AND &&
 #define OR ||
