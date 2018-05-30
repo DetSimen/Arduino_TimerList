@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Arduino.h"
 
+using THandle = int8_t;
 
 const THandle INVALID_HANDLE = -1;
 
