@@ -29,7 +29,7 @@ using	PVoidFunc = void(*)(void);      // указатель на функцию 
 #define	 TIMER0_ONE_MS	    247
 #endif
 
-#ifdef __AVR_ATmega168P__
+#ifdef __AVR_ATmega168__
 #define  MAXTIMERSCOUNT 	8		// 	Максимальное число зарегистрированных таймеров для прочих 168 - 8
 #define	 TIMER0_ONE_MS	    247
 #endif
