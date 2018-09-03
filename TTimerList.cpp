@@ -31,7 +31,7 @@ void TTimerList::Init()
 	SREG = oldSREG;
 
 }
-#elif defined(__AVR_ATmega328P__)  || defined(__AVR_ATmega168P__)
+#elif defined(__AVR_ATmega328P__)  || defined(__AVR_ATmega168__)
 void TTimerList::Init()
 {
 	byte oldSREG = SREG;
