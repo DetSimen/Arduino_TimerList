@@ -81,7 +81,6 @@ void TTimerList::Init()
 
 ISR(TIMER1_COMPA_vect){
 	OCR1A = _1MSCONST;
-	TCNT1 = 0xFFFF;		// чтоб на следующем шаге сработало переполнение и посчитался millis
 	TimerList.Tick();
 }
 #else
