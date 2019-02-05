@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <Arduino.h>
-#include <Consts.h>
 
 using bsize_t = uint8_t;
 using THandle = int8_t;
