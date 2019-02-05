@@ -36,10 +36,8 @@ static const int8_t INVALID_HANDLE = -1;
 
 using pvfCallback = void(*)(void); // тип pointer to void function Callback
 
-struct TCounterDown;				// опережающее обявление структуры TCounterDown
-using  PCounterDown = TCounterDown *;// и указателя на нее
-
-#pragma pack(push,1)				// выравнивание полей структуры - 1 байт
+class TCounterDown;		     // опережающее обявление класса TCounterDown
+using  PCounterDown = TCounterDown *;// и указателя на него
 
 class TCounterDown {
 protected:
@@ -122,10 +120,9 @@ public:
 
 };
 
-#pragma pack(pop)
 
 
-class TTimerList;				// опережающее обьявление класса 
+class TTimerList;		// опережающее обьявление класса 
 using PTimerList = TTimerList *; // и указателя на него
 
 extern TTimerList TimerList;   // глобальная переменная нашего списка счетчиков
