@@ -178,7 +178,7 @@ public:
 	// добавить не удалось
 	THandle Add(uint32_t ainterval, pvfCallback acallback) {
 		
-		if (fcount == (fsize - 1)) return INVALID_HANDLE; // список заполнен до отказа, мест нет
+		if (fcount == fsize) return INVALID_HANDLE; // список заполнен до отказа, мест нет
 
 		PCounterDown counter = new TCounterDown(ainterval, acallback); // попытаемся хапнуть память под щёччик
 		
