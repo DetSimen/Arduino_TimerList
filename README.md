@@ -224,14 +224,14 @@ millis() в этом отношении гораздо гуманнее. Он п
 	uint8_t greenLedPin = 13;
 
 	void tmrGreenLed(void){
-	static bool ledState=true;          	// состояние светодиода
-	digitalWrite(greenLedPin, state);	// вывести состояние в светодиод
-	ledstate = !ledstate;			// инвертировать состояние
+	  static bool ledState=true;          	// состояние светодиода
+	  digitalWrite(greenLedPin, state);	// вывести состояние в светодиод
+	  ledState = !ledState;			// инвертировать состояние
 	}
 
 	void setup(){
-	pinMode(greenLedPin, OUTPUT);
-	hGreenLed = TimerList.Add(1000,tmrGreenLed); // функция tmrGreenLed будет вызываться раз в 1000 мс.
+	  pinMode(greenLedPin, OUTPUT);
+	  hGreenLed = TimerList.Add(1000,tmrGreenLed); // функция tmrGreenLed будет вызываться раз в 1000 мс.
 	}
 
 	void loop(){}
@@ -241,12 +241,12 @@ millis() в этом отношении гораздо гуманнее. Он п
 
 
 	void tmrGreenLed(void){
-	static bool ledState=true;          	// состояние светодиода
-	digitalWrite(greenLedPin, state);	// вывести состояние в светодиод
+	   static bool ledState=true;          	// состояние светодиода
+	   digitalWrite(greenLedPin, state);	// вывести состояние в светодиод
 
-	TimerList.setNewInterval(hgreenLed, state ? 200 : 4800); // 
+	   TimerList.setNewInterval(hgreenLed, state ? 200 : 4800); // 
 
-	ledstate = !ledstate;			// инвертировать состояние
+	   ledState = !ledState;			// инвертировать состояние
 	}
 
 пробуем, спрашиваем, не надоедаем.
