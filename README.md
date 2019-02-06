@@ -225,7 +225,7 @@ millis() в этом отношении гораздо гуманнее. Он п
 
 	void tmrGreenLed(void){
 	  static bool ledState=true;          	// состояние светодиода
-	  digitalWrite(greenLedPin, state);	// вывести состояние в светодиод
+	  digitalWrite(greenLedPin, ledState);	// вывести состояние в светодиод
 	  ledState = !ledState;			// инвертировать состояние
 	}
 
@@ -242,9 +242,9 @@ millis() в этом отношении гораздо гуманнее. Он п
 
 	void tmrGreenLed(void){
 	   static bool ledState=true;          	// состояние светодиода
-	   digitalWrite(greenLedPin, state);	// вывести состояние в светодиод
+	   digitalWrite(greenLedPin, ledState);	// вывести состояние в светодиод
 
-	   TimerList.setNewInterval(hgreenLed, state ? 200 : 4800); // 
+	   TimerList.setNewInterval(hgreenLed, ledState ? 200 : 4800); // 
 
 	   ledState = !ledState;			// инвертировать состояние
 	}
