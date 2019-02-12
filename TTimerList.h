@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include <Arduino.h>
+#include <Consts.h>
 
-using bsize_t = uint8_t;
+using bsize_t = uint8_t;   // size_t  размером 1 байт
 using THandle = int8_t;
 
-static const int8_t INVALID_HANDLE = -1;
+//static const int8_t INVALID_HANDLE = -1;
 
 
 #ifdef __AVR_ATmega2560__
@@ -35,8 +36,11 @@ static const int8_t INVALID_HANDLE = -1;
 
 using pvfCallback = void(*)(void); // тип pointer to void function Callback
 
-class TCounterDown;		     // опережающее обявление класса TCounterDown
-using  PCounterDown = TCounterDown *;// и указателя на него
+
+class TCounterDown;						// опережающее обявление класса TCounterDown
+using  PCounterDown = TCounterDown *;	// и указателя на нее
+
+
 
 class TCounterDown {
 protected:
@@ -96,8 +100,9 @@ public:
 		Start(); 
 	};
 
-	// Оператор постдекремента. Уменьшает рабочий счетчик на 1 за вызов, если он не остановлен. Если счетчик дошел до 0, 
-	// и назначена функция Callback, то она вызывается
+	// Оператор постдекремента. Уменьшает рабочий счетчик на 1 за вызов, если он не остановлен. 
+	// Если счетчик дошел до 0, и назначена функция Callback, то она вызывается
+	// 
 	TCounterDown &operator --(int) {
 
 		uint8_t sreg = SREG;   // на всякий случай запомним состояние прерываний
@@ -106,7 +111,7 @@ public:
 
 		if ((isActive()) && (!isEmpty()) && ((--fWorkCount) == 0)) {  // если счетчик досчитал до 0
 			fWorkCount = fInitCount; // перезагружаем рабочий счётчик начальным значением, чтобы считать заново
-			sei();				// разрешаем прерывания
+//			sei();				// разрешаем прерывания
 			fCallback();		// и вызываем нашу фунцию обратного вызова
 		}
 		
@@ -121,7 +126,7 @@ public:
 
 
 
-class TTimerList;		// опережающее обьявление класса 
+class TTimerList;				// опережающее обьявление класса 
 using PTimerList = TTimerList *; // и указателя на него
 
 extern TTimerList TimerList;   // глобальная переменная нашего списка счетчиков
@@ -130,11 +135,12 @@ extern TTimerList TimerList;   // глобальная переменная на
 
 class TTimerList   {
 protected:
+	static constexpr bsize_t	fsize = MAXTIMERSCOUNT;		// Размер списка
+
 	bool		factive;	// Активность всего списка, если false - все таймеры остановлены
-	bsize_t		fsize;		// Размер списка
 	bsize_t		fcount;		// Количество добавленных таймеров
 
-	PCounterDown *Items;	// массив указателей на счетчики TCounterDown
+	PCounterDown Items[MAXTIMERSCOUNT];	// массив указателей на счетчики TCounterDown
 
 	// отдает true если THandle счётчика правильный [0..fsize-1]
 	// и сам счетчик не удален 
@@ -146,29 +152,23 @@ protected:
 	// реализация в cpp файле для разных камней разная
 	void Init(void);
 
-	// пустой конструктор, не разрешен, спрятан в protected
-	TTimerList(){};
 
 public:
 	// создает пустой список размера asize, для хранения счетчиков
 	// при создании забивает список NULL-ами
-	TTimerList(uint8_t asize) {
-		Items = new PCounterDown[fsize=asize];// попытаемся хапнуть память под массив указателей на счётчики          
-		if (Items == NULL) return;			  // если памяти нет, просто уходим, всё равно потом всё скрашится
+	TTimerList() {
 		for (bsize_t i = 0; i < fsize; i++) 
 			 Items[i] = NULL;				  // забиваем выделенную память нулями
 		factive = false;					  // пока ни один счетчик не добавлен, список неактивен	
 		fcount = 0;							  // и число счётчиков пока == 0
 	};
 
-/* for oversmart boys: uncomment this */
-//
-//	~TTimerList() {
-//		for (bsize_t i = 0; i < fsize; i++) {
-//			if (isValidHandle(i)) delete Items[i];
-//		}
-//		delete[] Items;
-//	}
+/* for oversmart boys: uncomment this 
+
+	~TTimerList() {
+		for (bsize_t i = 0; i < fsize; i++) delete Items[i];
+	}
+*/
 
 	// добавить счетчик в список
 	// ainterval задается в миллисекундах
@@ -257,7 +257,7 @@ public:
 	void Delete(THandle hnd) {
 		if (!isValid(hnd)) return;
 		PCounterDown cntptr = Items[hnd];
-		cntptr->Stop();
+		if (cntptr != NULL) cntptr->Stop();
 		delete(cntptr);
 		Items[hnd] = NULL;
 		if (--fcount == 0) Stop(); // Если счётчиков не осталось - остановить цикл перебора
@@ -274,8 +274,8 @@ public:
 	void Tick(void) {
 
 		if (isActive()) {
-			for (bsize_t i = 0; i < fsize; i++)  
-				if (isValid(i)) (*Items[i])--;
+			for (bsize_t i = 0; i < fsize; i++)
+				if (Items[i] != NULL) (*Items[i])--;
 		}
 
 	}

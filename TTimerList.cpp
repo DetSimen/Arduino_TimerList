@@ -1,8 +1,10 @@
 ﻿#include <Arduino.h>
+#include <util/atomic.h>
 #include "TTimerList.h"
+#include <avr\interrupt.h>
 
-// создается пустой, остановленный список щёччиков 
-TTimerList TimerList(MAXTIMERSCOUNT);
+// глобально создается пустой, остановленный список щёччиков 
+TTimerList TimerList;   // число таймеров = MAXTIMERSCOUNT
 
 /// Настройка таймеров для первого использования
 /// на срабатывание каждую 1 миллисекунду
@@ -13,44 +15,39 @@ TTimerList TimerList(MAXTIMERSCOUNT);
 #if defined(__AVR_ATmega2560__) 
 void TTimerList::Init()
 {
-	byte oldSREG = SREG;
-	cli();
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+		TCCR0A = TCCR0A & 0b11111100;
+		OCR0A = TIMER0_ONE_MS;
+		TIMSK0 |= 0x3;
+		TIFR0 = TIFR0 | 0x2;
 
-	TCCR0A = TCCR0A & 0b11111100;
-	OCR0A = TIMER0_ONE_MS;
-	TIMSK0 |= 0x3;
-	TIFR0 = TIFR0 | 0x2;
-
-	SREG = oldSREG;
-
+	}
 }
 #elif defined(__AVR_ATmega328P__)
 void TTimerList::Init()
 {
-	byte oldSREG = SREG;
-	cli();
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 
-	TCCR0A = TCCR0A & 0b11111100;
-	OCR0A = TIMER0_ONE_MS;
-	TIMSK0 |= 0x3;
-	TIFR0 = TIFR0 | 0x2;
+		TCCR0A = TCCR0A & 0b11111100;  // Таймер в режиме Normal
+		OCR0A = TIMER0_ONE_MS;		// загрузим регистр совпадения
+		TIMSK0 |= 0x3;				// установить OCIE0A и TOIE0, разрешим совпадение А и переполнение
+		TIFR0 |= 0x2;				// очистим флаг OCF0A если до этого он был установлен, ждём следущего совпадения
+	}
 
-	SREG = oldSREG;
 
 }
 
 #elif defined(__AVR_ATmega168__)
 void TTimerList::Init()
 {
-	byte oldSREG = SREG;
-	cli();
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 
-	TCCR0A = TCCR0A & 0b11111100;
-	OCR0A = TIMER0_ONE_MS;
-	TIMSK0 |= 0x3;
-	TIFR0 = TIFR0 | 0x2;
+		TCCR0A = TCCR0A & 0b11111100;
+		OCR0A = TIMER0_ONE_MS;
+		TIMSK0 |= 0x3;
+		TIFR0 = TIFR0 | 0x2;
 
-	SREG = oldSREG;
+	}
 
 }
 
@@ -58,21 +55,13 @@ void TTimerList::Init()
 #elif defined(__AVR_ATmega8__)
 void TTimerList::Init()
 {
-	byte oldSREG = SREG;
-	cli();
-
-	TCCR1A = 0; TCCR1B = 2;
-	TCNT1 = 0;
-
-	OCR1A = _1MSCONST;
-	TCCR1B |= (1 << WGM12);
-//	TCCR1B |= (1 << CS11) | (1 << CS10);
-	
-	TIMSK |= (1 << OCIE1A); 
-
-
-	SREG = oldSREG;
-
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+		TCCR1A = 0; TCCR1B = 2;
+		TCNT1 = 0;
+		OCR1A = _1MSCONST;
+		TCCR1B |= (1 << WGM12);
+		TIMSK |= (1 << OCIE1A);
+	}
 }
 #endif
 
