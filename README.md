@@ -211,7 +211,7 @@ millis() в этом отношении гораздо гуманнее. Он п
 
 Использование:  скопировать все файлы в свою директорию. В своем .ino файле написать 
 
-	#include "TTimerList.h" 
+	#include "TimerList.h" 
 
 	extern TTimerList TimerList;
 
@@ -220,7 +220,7 @@ millis() в этом отношении гораздо гуманнее. Он п
 рабочий Blink без delay(), millis() и loop() выглядит так
 
 
-	#include "TTimerList.h"
+	#include "TimerList.h"
 
 	extern TTimerList TimerList;
 
