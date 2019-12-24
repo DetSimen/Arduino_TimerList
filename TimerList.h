@@ -1,11 +1,10 @@
 ﻿#pragma once
 #include <Arduino.h>
-#include <Consts.h>
 
 using bsize_t = uint8_t;   // size_t  размером 1 байт
 using THandle = int8_t;
 
-//static const int8_t INVALID_HANDLE = -1;
+static const int8_t INVALID_HANDLE = -1;
 
 
 #ifdef __AVR_ATmega2560__
