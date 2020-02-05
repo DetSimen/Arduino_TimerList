@@ -1,5 +1,7 @@
 ﻿#pragma once
+
 #include <Arduino.h>
+//#include <Consts.h>
 
 using bsize_t = uint8_t;   // size_t  размером 1 байт
 using THandle = int8_t;
@@ -24,6 +26,13 @@ static const int8_t INVALID_HANDLE = -1;
 #define	 TIMER0_ONE_MS		245
 											
 #endif
+
+#ifdef  __AVR_ATmega32__
+#define  MAXTIMERSCOUNT		10		// 	Максимальное число зарегистрированных таймеров для прочих Uno - 10
+#define	 TIMER0_ONE_MS		245
+									//  между прерываниями 16 Мгц процессор выполнит примерно 10000 команд
+#endif //  
+
 
 #ifdef __AVR_ATmega32U4__
  #define  MAXTIMERSCOUNT		10		// 	Максимальное число зарегистрированных таймеров для Lяnardo - 10

@@ -1,7 +1,7 @@
 ﻿#include <Arduino.h>
 #include <util/atomic.h>
 #include "TimerList.h"
-#include <avr\interrupt.h>
+
 
 
 // глобально создается пустой, остановленный список щёччиков 
@@ -34,9 +34,20 @@ void TTimerList::Init()
 		TIMSK0 |= 0x3;				// установить OCIE0A и TOIE0, разрешим совпадение А и переполнение
 		TIFR0 |= 0x2;				// очистим флаг OCF0A если до этого он был установлен, ждём следущего совпадения
 	}
-
-
 }
+
+#elif defined(__AVR_ATmega32__)
+void TTimerList::Init()
+{
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+
+		TCCR0 = TCCR0 & 0b11111100;  // Таймер в режиме Normal
+		OCR0 = TIMER0_ONE_MS;		// загрузим регистр совпадения
+		TIMSK |= 0x3;				// установить OCIE0A и TOIE0, разрешим совпадение А и переполнение
+		TIFR |= 0x2;				// очистим флаг OCF0A если до этого он был установлен, ждём следущего совпадения
+	}
+}
+
 
 #elif defined(__AVR_ATmega32U4__)
 void TTimerList::Init()
@@ -67,7 +78,6 @@ void TTimerList::Init()
 
 }
 
-
 #elif defined(__AVR_ATmega8__)
 void TTimerList::Init()
 {
@@ -88,7 +98,15 @@ ISR(TIMER1_COMPA_vect){
 	OCR1A = _1MSCONST;
 	TimerList.Tick();
 }
+#elif defined(__AVR_ATmega32__)
+
+ISR(TIMER0_COMP_vect) {
+	TCNT0 = 0xFF;		// чтоб на следующем шаге сработало переполнение и посчитался millis
+	TimerList.Tick();
+}
+
 #else
+
 
 ISR(TIMER0_COMPA_vect){
 	TCNT0 = 0xFF;		// чтоб на следующем шаге сработало переполнение и посчитался millis
