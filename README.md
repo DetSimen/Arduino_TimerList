@@ -132,18 +132,15 @@ millis() в этом отношении гораздо гуманнее. Он п
 	// добавить счетчик в список
 	// ainterval   задается в миллисекундах
 	// acallback - адрес функции, которая вызовется, когда счетчик досчитает до 0
+	// aStopped - по умолчанию false, счетчик запускается сразу, но можно передать
+	//            true, тогда счётчик добавится в остановленном состоянии, потом 
+	//            нужно будет сделать Start(Handle) или Reset(Handle)
 	// 
 	// возвращает Handle щёччика (номер под которым он был добавлен), 
 	// или специальное значение INVALID_HANDLE, если 
 	// добавить не удалось, нет места в списке
 
-	THandle Add(uint32_t ainterval, pvfCallback acallback);
-
-
-	// то же, но счетчик создается в остановленном состоянии
-	// для запуска нужно потом вызвать TimerList.Start(hnd)
-	// 
-	THandle AddStopped(uint32_t ainterval, pvfCallback acallback);
+	THandle Add(uint32_t ainterval, pvfCallback acallback, bool aStopped = false);
 
 
 	// запустить цикл перебора счетчиков
