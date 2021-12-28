@@ -1,4 +1,4 @@
-﻿#include <Arduino.h>
+#include <Arduino.h>
 #include <util/atomic.h>
 #include "TimerList.h"
 
